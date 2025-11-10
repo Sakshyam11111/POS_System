@@ -1,3 +1,8 @@
+**[View live](https://pos-system-mu-three.vercel.app/)**
+
+**[Figma live](https://www.figma.com/design/IftOuUbbm09HR7ySd7eIYR/POS_System?m=auto&t=jHTSA71XUP2wYQ65-6)**
+
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
