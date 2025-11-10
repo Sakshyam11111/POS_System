@@ -35,7 +35,18 @@ const MartPOS = () => {
     const [bankName, setBankName] = useState('');
     const [bankAccount, setBankAccount] = useState('');
     const [bankRouting, setBankRouting] = useState('');
+    const [selectedCurrency, setSelectedCurrency] = useState('NPR');
+    const [showCurrencySelector, setShowCurrencySelector] = useState(false);
+    const currencies = [
+        { code: 'NPR', symbol: 'NPR', name: 'Nepalese Rupee' },
+        { code: 'USD', symbol: '$', name: 'US Dollar' },
+        { code: 'EUR', symbol: '€', name: 'Euro' },
+        { code: 'GBP', symbol: '£', name: 'British Pound' },
+        { code: 'INR', symbol: '₹', name: 'Indian Rupee' },
+        { code: 'CNY', symbol: '¥', name: 'Chinese Yuan' }
+    ];
     const modalRef = useRef(null);
+    const currencyRef = useRef(null);
 
     useEffect(() => {
         const initialProducts = Array(8).fill(null).map((_, i) => ({
@@ -61,6 +72,9 @@ const MartPOS = () => {
         const handleClickOutside = (event) => {
             if (modalRef.current && !modalRef.current.contains(event.target)) {
                 setShowPaymentModal(false);
+            }
+            if (currencyRef.current && !currencyRef.current.contains(event.target)) {
+                setShowCurrencySelector(false);
             }
         };
 
@@ -217,14 +231,19 @@ const MartPOS = () => {
         setShowPaymentModal(false);
     };
 
+    const getCurrencySymbol = () => {
+        const currency = currencies.find(c => c.code === selectedCurrency);
+        return currency ? currency.symbol : 'NPR';
+    };
+
     return (
         <div className="h-screen w-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex flex-col overflow-hidden">
             <header className="bg-gradient-to-r from-[#3673B4] to-[#3673B4] text-white shadow-xl flex-shrink-0">
                 <div className="px-6 py-4 flex justify-between items-center">
                     <div className="flex items-center gap-4">
                         <div className="bg-white/10 p-2 rounded-xl backdrop-blur-sm">
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
                             </svg>
                         </div>
                         <div>
@@ -305,15 +324,35 @@ const MartPOS = () => {
                             <div className="w-72 bg-gradient-to-br from-[#3673B4] to-[#3673B4] text-white rounded-xl shadow-xl p-6 flex flex-col justify-center">
                                 <div className="flex justify-between items-center mb-2">
                                     <span className="text-xs uppercase tracking-wider text-blue-100 font-semibold">Total Amount</span>
-                                    <div className="bg-white/20 p-1.5 rounded-lg backdrop-blur-sm">
+                                    <div className="bg-white/20 p-1.5 rounded-lg backdrop-blur-sm cursor-pointer" onClick={() => setShowCurrencySelector(!showCurrencySelector)}>
                                         <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                         </svg>
                                     </div>
                                 </div>
-                                <div className="text-4xl font-bold mb-2">NPR {totalAmount}</div>
+                                <div className="text-4xl font-bold mb-2">{getCurrencySymbol()} {totalAmount}</div>
                             </div>
                         </div>
+
+                        {/* Currency Selector Dropdown */}
+                        {showCurrencySelector && (
+                            <div ref={currencyRef} className="absolute right-4 top-40 z-20 bg-white rounded-xl shadow-xl border border-gray-200 p-2 w-64">
+                                <div className="font-semibold text-gray-700 px-3 py-2 border-b border-gray-100">Select Currency</div>
+                                {currencies.map(currency => (
+                                    <div
+                                        key={currency.code}
+                                        onClick={() => {
+                                            setSelectedCurrency(currency.code);
+                                            setShowCurrencySelector(false);
+                                        }}
+                                        className={`px-3 py-2 hover:bg-gray-100 cursor-pointer rounded-lg flex justify-between items-center ${selectedCurrency === currency.code ? 'bg-blue-50 text-blue-600 font-medium' : 'text-gray-700'}`}
+                                    >
+                                        <span>{currency.code} - {currency.name}</span>
+                                        <span>{currency.symbol}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
 
                         <form onSubmit={handleBarcodeSubmit} className="bg-white rounded-xl shadow-lg border border-[#3673B4]/20 p-4 flex gap-3">
                             <div className="flex-1 relative">
@@ -331,11 +370,9 @@ const MartPOS = () => {
                                     autoFocus
                                 />
                             </div>
+                            <p className='text-[#3673B4] text-3xl'>Qty</p>
                             <button type="submit" className="px-6 py-3 bg-gradient-to-r from-[#3673B4] to-[#3673B4] text-white rounded-xl hover:from-[#2a5a8e] hover:to-[#2a5a8e] text-sm font-semibold shadow-md hover:shadow-xl transition-all flex items-center gap-2">
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                                </svg>
-                                Add Product
+                                0
                             </button>
                         </form>
 
@@ -348,8 +385,8 @@ const MartPOS = () => {
                                     Product List
                                 </h3>
                             </div>
-                            <div className="flex-1 flex flex-col overflow-hidden">
-                                <div className="overflow-auto">
+                            <div className="flex-1 overflow-hidden flex flex-col">
+                                <div className="overflow-y-auto flex-1">
                                     <table className="w-full text-xs">
                                         <thead className="bg-gradient-to-r from-[#3673B4]/10 to-[#3673B4]/10 border-b border-[#3673B4]/20 sticky top-0">
                                             <tr>
@@ -413,8 +450,8 @@ const MartPOS = () => {
                                                 <td></td>
                                                 <td></td>
                                                 <td></td>
-                                                <td className="px-3 py-3 text-right text-[#3673B4] font-bold">{totalDiscount}</td>
-                                                <td className="px-3 py-3 text-right text-lg text-[#3673B4] font-bold">{totalAmount}</td>
+                                                <td className="px-3 py-3 text-right text-[#3673B4] font-bold">{getCurrencySymbol()} {totalDiscount}</td>
+                                                <td className="px-3 py-3 text-right text-lg text-[#3673B4] font-bold">{getCurrencySymbol()} {totalAmount}</td>
                                                 <td></td>
                                             </tr>
                                         </tbody>
@@ -449,7 +486,7 @@ const MartPOS = () => {
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                                     </svg>
-                                    Today’s Invoice List
+                                    Today's Invoice List
                                 </button>
                                 <button className="w-full py-2 bg-gradient-to-r from-[#3673B4] to-[#3673B4] text-white rounded-lg hover:from-[#2a5a8e] hover:to-[#2a5a8e] text-xs font-semibold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2">
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -595,23 +632,23 @@ const MartPOS = () => {
                             {/* Left Section - Payment Information with Scroll */}
                             <div className="w-1/2 flex flex-col bg-gradient-to-br from-gray-50 to-[#3673B4]/10">
                                 {/* Fixed Header with Spinner */}
-                                <div className="p-8 pb-4">
-                                    <div className="grid grid-cols-2 gap-4 mb-6">
+                                <div className="p-3 pb-1">
+                                    <div className="grid grid-cols-2 gap-4 mb-1">
                                         <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
                                             <p className="text-gray-500 text-xs font-medium mb-1">Bill Amount</p>
-                                            <p className="text-2xl font-bold text-gray-800">{totalAmount}</p>
+                                            <p className="text-2xl font-bold text-gray-800">{getCurrencySymbol()} {totalAmount}</p>
                                         </div>
                                         <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
                                             <p className="text-gray-500 text-xs font-medium mb-1">Discount</p>
-                                            <p className="text-2xl font-bold text-[#37B44A]">{totalDiscount}</p>
+                                            <p className="text-2xl font-bold text-[#37B44A]">{getCurrencySymbol()} {totalDiscount}</p>
                                         </div>
                                         <div className="bg-gradient-to-br from-[#3673B4] to-[#2a5a8e] rounded-xl p-4 shadow-md">
                                             <p className="text-blue-100 text-xs font-medium mb-1">Final Amount</p>
-                                            <p className="text-2xl font-bold text-white">{(parseFloat(totalAmount) - parseFloat(totalDiscount)).toFixed(2)}</p>
+                                            <p className="text-2xl font-bold text-white">{getCurrencySymbol()} {(parseFloat(totalAmount) - parseFloat(totalDiscount)).toFixed(2)}</p>
                                         </div>
                                         <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
                                             <p className="text-gray-500 text-xs font-medium mb-1">Return</p>
-                                            <p className="text-2xl font-bold text-amber-600">{calculateReturnAmount()}</p>
+                                            <p className="text-2xl font-bold text-amber-600">{getCurrencySymbol()} {calculateReturnAmount()}</p>
                                         </div>
                                     </div>
                                 </div>
