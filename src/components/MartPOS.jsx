@@ -7,9 +7,7 @@ const MartPOS = () => {
     const [totalAmount, setTotalAmount] = useState(0.00);
     const [totalQty, setTotalQty] = useState(0);
     const [totalDiscount, setTotalDiscount] = useState(0.00);
-    const [invoiceNo, setInvoiceNo] = useState('S1 - 8182 - 000001');
-    const [counter] = useState(1);
-    const [cashier] = useState('Rupesh');
+    const [setInvoiceNo] = useState('S1 - 8182 - 000001');
     const [vat] = useState('0');
     const [productId, setProductId] = useState('');
     const [salesPrice, setSalesPrice] = useState('0');
@@ -243,7 +241,6 @@ const MartPOS = () => {
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                 </svg>
-                                {cashier}
                             </button>
                         </div>
                     </div>
@@ -315,14 +312,6 @@ const MartPOS = () => {
                                     </div>
                                 </div>
                                 <div className="text-4xl font-bold mb-2">NPR {totalAmount}</div>
-                                <div className="flex items-center gap-3 text-sm">
-                                    <div className="bg-white/20 px-3 py-1 rounded-lg backdrop-blur-sm">
-                                        <span className="font-semibold">{totalQty}</span> items
-                                    </div>
-                                    <div className="bg-white/20 px-3 py-1 rounded-lg backdrop-blur-sm">
-                                        <span className="font-semibold">{totalDiscount}</span> discount
-                                    </div>
-                                </div>
                             </div>
                         </div>
 
@@ -553,12 +542,9 @@ const MartPOS = () => {
                     <div className="flex justify-between items-center">
                         <div className="flex gap-4">
                             {[
-                                ['F1', 'New', 'M12 4v16m8-8H4'],
-                                ['F2', 'Save', 'M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4'],
-                                ['F3', 'Payment', 'M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z'],
-                                ['F4', 'Hold', 'M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4'],
-                                ['F5', 'Load', 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12'],
-                                ['F6', 'Refresh', 'M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15'],
+                                ['Ctrl+S', 'For Payment', 'M12 4v16m8-8H4'],
+                                ['Ctrl+B', 'For BarCode', 'M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4'],
+                                ['Ctrl+Q', 'Qty', 'M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z'],
                                 ['ESC', 'Exit', 'M6 18L18 6M6 6l12 12']
                             ].map(([key, label, path]) => (
                                 <div key={key} className="flex items-center gap-2 bg-[#3673B4]/10 px-2 py-1.5 rounded-lg">
